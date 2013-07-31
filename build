@@ -1,0 +1,25 @@
+#!/bin/bash
+cd "$( dirname "$0" )"
+if [ -f ./SiriAuthFix/libsubstrate.dylib -a -f ./SiriAuthFix/substrate.h ]
+then
+	echo "[1] Building SiriAuthFix..."
+	xcodebuild LIBRARY_SEARCH_PATHS="./SiriAuthFix/" HEADER_SEARCH_PATHS="./SiriAuthFix/" BUILD_DIR="./"
+	mv ./Release-iphoneos/SiriAuthFix.dylib ./SiriAuthFix.dylib
+	cp ./SiriAuthFix/SiriAuthFix.plist ./SiriAuthFix.plist
+	rm -R build
+	rm -R Release-iphoneos
+	echo "Done! Copy SiriAuthFix.dylib and SiriAuthFix.plist to /Library/MobileSubstrate/DynamicLibraries"
+	exit 0
+fi
+echo "[1] Downloading required files..."
+git clone --quiet https://github.com/msftguy/ultrasn0w-fixer /tmp/msftguy/ # Im cloning this repo because its got substrate.h and libsubstate.dylib
+echo "[2] Copying required files..."
+mv /tmp/msftguy/libsubstrate.dylib ./SiriAuthFix/libsubstrate.dylib
+mv /tmp/msftguy/substrate.h ./SiriAuthFix/substrate.h
+echo "[3] Building SiriAuthFix..."
+xcodebuild LIBRARY_SEARCH_PATHS="./SiriAuthFix/" HEADER_SEARCH_PATHS="./SiriAuthFix/" BUILD_DIR="./"
+mv ./Release-iphoneos/SiriAuthFix.dylib ./SiriAuthFix.dylib
+cp ./SiriAuthFix/SiriAuthFix.plist ./SiriAuthFix.plist
+rm -R build
+rm -R Release-iphoneos
+echo "Done! Copy SiriAuthFix.dylib and SiriAuthFix.plist to /Library/MobileSubstrate/DynamicLibraries"
